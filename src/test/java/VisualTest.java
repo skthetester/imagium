@@ -1,5 +1,7 @@
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -19,11 +21,11 @@ public class VisualTest {
         options.addArguments("start-maximized");
         options.addArguments("--disable-extensions");
         WebDriver driver = new ChromeDriver(options);
-        driver.get("https://testingchief.com");
+        driver.get("http://ignite:81/bootstrap/sb-admin/login.html");
         Screenshot screenshot = new AShot()
                 .shootingStrategy(ShootingStrategies.viewportPasting(1000))
-                .takeScreenshot(driver);
-        ImageIO.write(screenshot.getImage(), "PNG", new File("./img/example.png"));
+                .takeScreenshot(driver, driver.findElement(By.xpath("//div[@class='container']")));
+        ImageIO.write(screenshot.getImage(), "PNG", new File("./img/" + driver.getTitle() +".png"));
         driver.close();
         driver.quit();
     }
