@@ -4,6 +4,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -29,21 +30,24 @@ public class ImagiumTest {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("start-maximized");
         options.addArguments("--disable-extensions");
+        options.addArguments("--headless");
         driver = new ChromeDriver(options);
+        driver.manage().window().setSize(new Dimension(1920, 1080));
     }
 
     @Test
     public void visualTest() throws IOException {
         driver.get(url + testPage);
         Screenshot screenshot = new AShot()
-                .shootingStrategy(ShootingStrategies.viewportPasting(ShootingStrategies.scaling(1.25f), 1000))
+//                .shootingStrategy(ShootingStrategies.viewportPasting(ShootingStrategies.scaling(1.25f), 1000))
+                .shootingStrategy(ShootingStrategies.viewportPasting(1000))
                 .takeScreenshot(driver, driver.findElement(By.xpath("//div[@class='container']")));
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ImageIO.write(screenshot.getImage(), "PNG", out);
         byte[] bytes = out.toByteArray();
         String imagebase64 = Base64.encodeBase64String(bytes);
 
-        String projectID = Imagium.getUID("login", "c272bef9-1432-44e6-8fd8-8227e3e451df", testMode);
+        String projectID = Imagium.getUID("Login Form", "c272bef9-1432-44e6-8fd8-8227e3e451df", testMode);
         String response = Imagium.postRequest("Visual Test", projectID, imagebase64);
         assertThat(response).doesNotContain("Failed");
     }
